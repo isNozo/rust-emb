@@ -5,5 +5,7 @@ ARG VARIANT="buster"
 FROM mcr.microsoft.com/vscode/devcontainers/rust:0-${VARIANT}
 
 # [Optional] Uncomment this section to install additional packages.
-# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-#     && apt-get -y install --no-install-recommends <your-package-list-here>
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends git minicom libusb-1.0.0-dev libsdl2-dev libssl-dev
+RUN rustup target add thumbv7em-none-eabihf \
+    && cargo install cargo-generate hf2-cli cargo-hf2
