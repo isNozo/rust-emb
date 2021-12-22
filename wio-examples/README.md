@@ -1,6 +1,6 @@
-# wio-blink-template
+# wio-examples-template
 
-Wio Terminal で L チカを試すための組込み Rust プロジェクトです。
+Wio Terminal でデバイスを試すための組込み Rust プロジェクトです。
 
 ## 事前準備
 
@@ -55,22 +55,16 @@ cargo-generate でプロジェクトテンプレートを初期化します。
 
 ```
 $ cargo generate \
-    --git https://github.com/tomoyuki-nakabayashi/wio-blink-template.git \
-    --name my-blink
+    --git https://github.com/tomoyuki-nakabayashi/wio-examples-template.git \
+    --name wio_examples
 ```
 
-`my-blink` ディレクトリの `src/main.rs` の TODO がついている場所のコードを埋めます。
-
-```rust
-    loop {
-        // TODO: ここにLチカのコードを書きます
-    }
-```
+examples ディレクトリ下にあるソースコードの TODO 部分を書籍を参考にしながら実装します。
 
 Wio Terminal をブートローダーモードに切り替えたあと、次のコマンドを実行します。
 
 ```
-$ cargo hf2
+$ cargo hf2 --example <サンプル名>
 ```
 
 ## License
