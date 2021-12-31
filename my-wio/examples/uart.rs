@@ -21,7 +21,7 @@ fn main() -> ! {
         &mut peripherals.NVMCTRL,
     );
 
-    let mut sets = wio::Pins::new(peripherals.PORT).split();
+    let sets = wio::Pins::new(peripherals.PORT).split();
     let mut serial = sets.uart.init(
         &mut clocks,
         115200.hz(),
@@ -29,6 +29,13 @@ fn main() -> ! {
         &mut peripherals.MCLK
     );
 
+    for c in b"Serial start!\n".iter() {
+        nb::block!(serial.write(*c)).unwrap();
+    }
+
     loop {
+        if let Ok(c) = nb::block!(serial.read()) {
+            nb::block!(serial.write(c)).unwrap();
+        }
     }
 }
