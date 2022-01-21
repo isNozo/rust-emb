@@ -1,13 +1,20 @@
 #![no_std]
 #![no_main]
 
-use panic_halt as _;
 use wio_terminal as wio;
 
 use wio::entry;
 use wio::hal::clock::GenericClockController;
+use wio::hal::gpio::*;
+use wio::hal::sercom::*;
 use wio::pac::Peripherals;
 use wio::prelude::*;
+use core::panic::PanicInfo;
+use core::fmt::Write;
+
+static mut UART: Option<
+    UART2<Sercom2Pad1<Pb27<PfC>>, Sercom2Pad0<Pb26<PfC>>, (), ()>
+> = None;
 
 #[entry]
 fn main() -> ! {
@@ -21,21 +28,32 @@ fn main() -> ! {
         &mut peripherals.NVMCTRL,
     );
 
-    let sets = wio::Pins::new(peripherals.PORT).split();
-    let mut serial = sets.uart.init(
+    let mut sets = wio::Pins::new(peripherals.PORT).split();
+    let serial = sets.uart.init(
         &mut clocks,
         115200.hz(),
         peripherals.SERCOM2,
-        &mut peripherals.MCLK
+        &mut peripherals.MCLK,
+        &mut sets.port
     );
 
-    for c in b"Serial start!\n".iter() {
-        nb::block!(serial.write(*c)).unwrap();
+    unsafe {
+        UART = Some(serial);
+        writeln!(UART.as_mut().unwrap(), "hello world").unwrap();
     }
 
-    loop {
-        if let Ok(c) = nb::block!(serial.read()) {
-            nb::block!(serial.write(c)).unwrap();
-        }
+    // panic!
+    let none: Option<usize> = None;
+    none.unwrap();
+
+    loop {}
+}
+
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    unsafe {
+        writeln!(UART.as_mut().unwrap(), "panic: {}", info).ok();
     }
+
+    loop {}
 }
