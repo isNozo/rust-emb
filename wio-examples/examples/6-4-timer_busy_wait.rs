@@ -9,7 +9,6 @@
 #![no_std]
 #![no_main]
 
-use cortex_m::peripheral;
 use panic_halt as _;
 use wio_terminal as wio;
 
